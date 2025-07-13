@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url:
+    username: your-username
+    password: your-password
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+server:
+  port: ${PORT:8080}
