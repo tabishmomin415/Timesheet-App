@@ -101,14 +101,14 @@ npm start
 
 The frontend will start on: http://localhost:3000 
 
-## Screenshots
+## Results
 
 | Feature           |            Link                  |
 |-------------------|---------------------------------|
 | Dashboard         | [View Image](Screenshots/Dashboard.png)         |
 | Login             | [View Image](Screenshots/Login.png)             |
 | Timesheet Form    | [View Image](Screenshots/AddTimesheet.png)    |
-| Timesheet Summary | [View Image](Screenshots/SummarySection.png) |
+| Timesheet Summary | [View Image](Screenshots/Summary.png) |
 | Register          | [View Image](Screenshots/Register.png)          |
 
 
