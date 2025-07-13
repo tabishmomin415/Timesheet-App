@@ -105,10 +105,10 @@ The frontend will start on: http://localhost:3000
 
 | Feature           |            Link                  |
 |-------------------|---------------------------------|
-| Dashboard         | [View Image](Screenshots/Dashboard.png)         |
-| Login             | [View Image](Screenshots/Login.png)             |
-| Timesheet Form    | [View Image](Screenshots/AddTimesheet.png)    |
-| Timesheet Summary | [View Image](Screenshots/Summary.png) |
-| Register          | [View Image](Screenshots/Register.png)          |
+| Dashboard         | [View Image](Screenshots/Dashboard.PNG)         |
+| Login             | [View Image](Screenshots/Login.PNG)             |
+| Timesheet Form    | [View Image](Screenshots/AddTimesheet.PNG)    |
+| Timesheet Summary | [View Image](Screenshots/Summary.PNG) |
+| Register          | [View Image](Screenshots/Register.PNG)          |
 
 
