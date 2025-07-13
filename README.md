@@ -26,6 +26,7 @@ This is a simple **Timesheet Management System**, designed to help employees log
 
 ### Frontend (React)
 
+```bash
 frontend/
 ├── src/
 │ ├── components/
@@ -42,9 +43,10 @@ frontend/
 │ ├── App.js
 │ └── index.js
 └── package.json
+```
 
 ### Backend (Spring Boot)
-
+```bash
 backend/
 ├── src/
 │ └── main/java/com/timesheet/
@@ -58,7 +60,7 @@ backend/
 ├── src/main/resources/
 │ └── application.properties
 └── pom.xml
-
+```
 ---
 
 ## How to Run the Project
@@ -67,6 +69,7 @@ backend/
 ```bash
 git clone https://github.com/tabishmomin415/Timesheet-App.git
 cd timesheet-app
+```
 
 ### 2. Setup PostgreSQL Database
 
@@ -77,12 +80,14 @@ Make sure **PostgreSQL** is installed and running on your system.
 
 ```bash
 psql -U postgres -d timesheet_db -f database/schema.sql
+```
 
 ### 3. Run the Backend (Spring Boot)
 
 ```bash
 cd backend
 ./mvnw spring-boot:run
+```
 
 The backend will start on: http://localhost:8080
 
@@ -92,6 +97,7 @@ The backend will start on: http://localhost:8080
 cd frontend
 npm install
 npm start
+```
 
 The frontend will start on: http://localhost:3000 
 
