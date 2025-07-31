@@ -1,6 +1,6 @@
 # Timesheet-App
 
-This is a simple **Timesheet Management System**, designed to help employees log their daily work hours against specific projects.
+A modern, full-stack web application for managing employee timesheets with role-based access control, interactive dashboards, and comprehensive reporting features.
 
 ---
 
@@ -11,14 +11,27 @@ This is a simple **Timesheet Management System**, designed to help employees log
 | Frontend  | React            |
 | Backend   | Spring Boot REST |
 | Database  | PostgreSQL       |
+| DevOps    | Docker           |
 
 ---
 
 ## Features
 
-- Employee registration and login  
-- Submit timesheets per project and date  
-- View previous timesheets  
+ # Employee Features
+
+   - Create and manage personal timesheets
+   - Project selection with hours tracking
+   - Weekly and monthly summary reports
+   - Interactive dashboard with charts
+   - Date-based filtering and search
+     
+ # Admin Features
+ 
+   - View all employee timesheets
+   - Comprehensive admin dashboard
+   - Create and manage projects
+   - Employee performance analytics
+   - Advanced reporting with charts
 
 ---
 
@@ -27,39 +40,77 @@ This is a simple **Timesheet Management System**, designed to help employees log
 ### Frontend (React)
 
 ```bash
-frontend/
-├── src/
-│ ├── components/
-│ │ ├── Dashboard.js
-| │ ├── Login.js
-| │ ├── Navbar.js
-│ │ ├── Register.js
-│ │ ├── TimesheetForm.js
-│ │ └── TimesheetSummary.js
-| ├── contexts/
-│ │ └── AuthContext.js
-| ├── services/
-│ │ └── api.js
-│ ├── App.js
-│ └── index.js
-└── package.json
-```
-
-### Backend (Spring Boot)
-```bash
-backend/
-├── src/
-│ └── main/java/com/timesheet/
-│ ├── config/
-│ ├── controller/
-│ ├── dto/
-│ ├── model/
-│ ├── repository/
-│ ├── service/
-│ └── TimesheetApplication.java
-├── src/main/resources/
-│ └── application.properties
-└── pom.xml
+timesheet-app/
+│
+├── docker-compose.yml
+├── backend/
+│   ├── Dockerfile
+│   ├── pom.xml
+│   ├── mvnw
+│   ├── mvnw.cmd
+│   ├── .mvn/
+│   │   └── wrapper/
+│   │       ├── maven-wrapper.jar
+│   │       └── maven-wrapper.properties
+│   └── src/
+│       ├── main/
+│       │   ├── java/
+│       │   │   └── com/
+│       │   │       └── timesheet/
+│       │   │           ├── TimesheetApplication.java
+│       │   │           ├── entity/
+│       │   │           │   ├── User.java
+│       │   │           │   ├── Project.java
+│       │   │           │   └── Timesheet.java
+│       │   │           ├── repository/
+│       │   │           │   ├── UserRepository.java
+│       │   │           │   ├── ProjectRepository.java
+│       │   │           │   └── TimesheetRepository.java
+│       │   │           ├── security/
+│       │   │           │   ├── JwtUtils.java
+│       │   │           │   ├── UserPrincipal.java
+│       │   │           │   ├── CustomUserDetailsService.java
+│       │   │           │   ├── AuthTokenFilter.java
+│       │   │           │   └── WebSecurityConfig.java
+│       │   │           ├── controller/
+│       │   │           │   ├── AuthController.java
+│       │   │           │   ├── TimesheetController.java
+│       │   │           │   └── ProjectController.java
+│       │   │           └── dto/
+│       │   │               ├── LoginRequest.java
+│       │   │               ├── SignupRequest.java
+│       │   │               ├── JwtResponse.java
+│       │   │               ├── MessageResponse.java
+│       │   │               ├── TimesheetRequest.java
+│       │   │               ├── TimesheetResponse.java
+│       │   │               ├── ProjectRequest.java
+│       │   │               ├── ProjectResponse.java
+│       │   │               └── TimesheetSummary.java
+│       │   └── resources/
+│               └── application.properties
+│      
+│           
+│
+└── frontend/
+    ├── Dockerfile
+    ├── package.json
+    ├── public/
+    │   └── index.html
+    └── src/
+        ├── index.js
+        ├── App.js
+        ├── components/
+        │   ├── Login.js
+        │   ├── Register.js
+        │   ├── Navbar.js
+        │   ├── Dashboard.js
+        │   ├── TimesheetForm.js
+        │   ├── TimesheetSummary.js
+        │   └── AdminDashboard.js
+        ├── context/
+        │   └── AuthContext.js
+        └── services/
+            └── api.js
 ```
 ---
 
@@ -103,12 +154,20 @@ The frontend will start on: http://localhost:3000
 
 ## Results
 
-| Feature           |            Link                  |
+| Feature(Employee) |            Link                  |
 |-------------------|---------------------------------|
-| Dashboard         | [View Image](Screenshots/Dashboard.PNG)         |
+| Dashboard         | [View Image](Screenshots/EmplyeeDashboard_01.PNG)|
+                    | [View Image](Screenshots/EmplyeeDashboard_02.PNG)|
 | Login             | [View Image](Screenshots/Login.PNG)             |
 | Timesheet Form    | [View Image](Screenshots/AddTimesheet.PNG)    |
-| Timesheet Summary | [View Image](Screenshots/Summary.PNG) |
+| Timesheet Summary | [View Image](Screenshots/EmployeeSummary.PNG) |
 | Register          | [View Image](Screenshots/Register.PNG)          |
+
+| Feature(Admin)    |            Link                  |
+|-------------------|---------------------------------|
+| Dashboard         | [View Image](Screenshots/AdminDashboard_01.PNG)    |
+                    | [View Image](Screenshots/AdminDashboard_02.PNG)    |
+                    | [View Image](Screenshots/AdminDashboard_03.PNG)    |
+
 
 
