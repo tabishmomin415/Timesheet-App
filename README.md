@@ -17,7 +17,7 @@ A modern, full-stack web application for managing employee timesheets with role-
 
 ## Features
 
- # Employee Features
+### Employee Features
 
    - Create and manage personal timesheets
    - Project selection with hours tracking
@@ -25,7 +25,7 @@ A modern, full-stack web application for managing employee timesheets with role-
    - Interactive dashboard with charts
    - Date-based filtering and search
      
- # Admin Features
+ ### Admin Features
  
    - View all employee timesheets
    - Comprehensive admin dashboard
@@ -36,8 +36,6 @@ A modern, full-stack web application for managing employee timesheets with role-
 ---
 
 ## Project Structure
-
-### Frontend (React)
 
 ```bash
 timesheet-app/
