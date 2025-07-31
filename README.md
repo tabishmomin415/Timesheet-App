@@ -8,8 +8,8 @@ A modern, full-stack web application for managing employee timesheets with role-
 
 | Layer     | Technology       |
 |-----------|------------------|
-| Frontend  | React            |
-| Backend   | Spring Boot REST |
+| Frontend  | React 18, Material-UI 5, Chart.js, Axios, React Router |
+| Backend   | Java 17, Spring Boot 3.2, Spring Boot, Spring Security, Spring Data JPA, JWT, Maven  |
 | Database  | PostgreSQL       |
 | DevOps    | Docker           |
 
@@ -52,39 +52,39 @@ timesheet-app/
 │   │       └── maven-wrapper.properties
 │   └── src/
 │       ├── main/
-│       │   ├── java/
-│       │   │   └── com/
-│       │   │       └── timesheet/
-│       │   │           ├── TimesheetApplication.java
-│       │   │           ├── entity/
-│       │   │           │   ├── User.java
-│       │   │           │   ├── Project.java
-│       │   │           │   └── Timesheet.java
-│       │   │           ├── repository/
-│       │   │           │   ├── UserRepository.java
-│       │   │           │   ├── ProjectRepository.java
-│       │   │           │   └── TimesheetRepository.java
-│       │   │           ├── security/
-│       │   │           │   ├── JwtUtils.java
-│       │   │           │   ├── UserPrincipal.java
-│       │   │           │   ├── CustomUserDetailsService.java
-│       │   │           │   ├── AuthTokenFilter.java
-│       │   │           │   └── WebSecurityConfig.java
-│       │   │           ├── controller/
-│       │   │           │   ├── AuthController.java
-│       │   │           │   ├── TimesheetController.java
-│       │   │           │   └── ProjectController.java
-│       │   │           └── dto/
-│       │   │               ├── LoginRequest.java
-│       │   │               ├── SignupRequest.java
-│       │   │               ├── JwtResponse.java
-│       │   │               ├── MessageResponse.java
-│       │   │               ├── TimesheetRequest.java
-│       │   │               ├── TimesheetResponse.java
-│       │   │               ├── ProjectRequest.java
-│       │   │               ├── ProjectResponse.java
-│       │   │               └── TimesheetSummary.java
-│       │   └── resources/
+│           ├── java/
+│           │   └── com/
+│           │       └── timesheet/
+│           │           ├── TimesheetApplication.java
+│           │           ├── entity/
+│           │           │   ├── User.java
+│           │           │   ├── Project.java
+│           │           │   └── Timesheet.java
+│           │           ├── repository/
+│           │           │   ├── UserRepository.java
+│           │           │   ├── ProjectRepository.java
+│           │           │   └── TimesheetRepository.java
+│           │           ├── security/
+│           │           │   ├── JwtUtils.java
+│           │           │   ├── UserPrincipal.java
+│           │           │   ├── CustomUserDetailsService.java
+│           │           │   ├── AuthTokenFilter.java
+│           │           │   └── WebSecurityConfig.java
+│           │           ├── controller/
+│           │           │   ├── AuthController.java
+│           │           │   ├── TimesheetController.java
+│           │           │   └── ProjectController.java
+│           │           └── dto/
+│           │               ├── LoginRequest.java
+│           │               ├── SignupRequest.java
+│           │               ├── JwtResponse.java
+│           │               ├── MessageResponse.java
+│           │               ├── TimesheetRequest.java
+│           │               ├── TimesheetResponse.java
+│           │               ├── ProjectRequest.java
+│           │               ├── ProjectResponse.java
+│           │               └── TimesheetSummary.java
+│           └── resources/
 │               └── application.properties
 │      
 │           
@@ -120,27 +120,35 @@ git clone https://github.com/tabishmomin415/Timesheet-App.git
 cd timesheet-app
 ```
 
-### 2. Setup PostgreSQL Database
-
-Make sure **PostgreSQL** is installed and running on your system.
-
-- Create a database named `timesheet_db`
-- Run the following command to create the tables and insert sample data:
+### 2. Run the Application
 
 ```bash
-psql -U postgres -d timesheet_db -f database/schema.sql
+docker-compose up --build
 ```
 
-### 3. Run the Backend (Spring Boot)
+### 3. Access the Application
 
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:8080
+
+### 4. Custom Configuration
+To modify settings, edit the docker-compose.yml file:
+
+```bash
+environment:
+  - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/your_db
+  - SPRING_DATASOURCE_USERNAME=your_user
+  - SPRING_DATASOURCE_PASSWORD=your_password
+```
+## Development
+
+### 1. Backend Development:
 ```bash
 cd backend
 ./mvnw spring-boot:run
 ```
 
-The backend will start on: http://localhost:8080
-
-### 4. Run the Frontend (React)
+### 2. Frontend Development:
 
 ```bash
 cd frontend
@@ -148,8 +156,12 @@ npm install
 npm start
 ```
 
-The frontend will start on: http://localhost:3000 
+### 3. Database:
 
+```bash
+docker run --name postgres-dev -e POSTGRES_DB=timesheet_db -e POSTGRES_USER=timesheet_user -e POSTGRES_PASSWORD=timesheet_pass -p 5432:5432 -d postgres:15-alpine
+```
+  
 ## Results
 
 | Feature(Employee) |            Link                  |
