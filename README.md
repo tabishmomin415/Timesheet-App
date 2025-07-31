@@ -155,7 +155,7 @@ The frontend will start on: http://localhost:3000
 | Feature(Employee) |            Link                  |
 |-------------------|---------------------------------|
 | Dashboard         | [View Image](Screenshots/EmplyeeDashboard_01.PNG)|
-                    | [View Image](Screenshots/EmplyeeDashboard_02.PNG)|
+|                   | [View Image](Screenshots/EmplyeeDashboard_02.PNG)|
 | Login             | [View Image](Screenshots/Login.PNG)             |
 | Timesheet Form    | [View Image](Screenshots/AddTimesheet.PNG)    |
 | Timesheet Summary | [View Image](Screenshots/EmployeeSummary.PNG) |
@@ -164,8 +164,8 @@ The frontend will start on: http://localhost:3000
 | Feature(Admin)    |            Link                  |
 |-------------------|---------------------------------|
 | Dashboard         | [View Image](Screenshots/AdminDashboard_01.PNG)    |
-                    | [View Image](Screenshots/AdminDashboard_02.PNG)    |
-                    | [View Image](Screenshots/AdminDashboard_03.PNG)    |
+|                   | [View Image](Screenshots/AdminDashboard_02.PNG)    |
+|                   | [View Image](Screenshots/AdminDashboard_03.PNG)    |
 
 
 
