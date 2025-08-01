@@ -16,40 +16,59 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
+    const token = localStorage.getItem('token');
+    const userData = localStorage.getItem('user');
+    
+    if (token && userData) {
+      const parsedUser = JSON.parse(userData);
+      setUser(parsedUser);
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     }
     setLoading(false);
   }, []);
 
-  const login = async (email, password) => {
+  const login = async (username, password) => {
     try {
-      const response = await api.post('/employees/login', { email, password });
-      const userData = response.data;
-      setUser(userData);
+      const response = await api.post('/auth/signin', { username, password });
+      const { accessToken, id, email, username: userUsername } = response.data;
+      
+      // Check if user is admin (you can determine this based on username or add role to JWT response)
+      const role = userUsername.toLowerCase() === 'admin' ? 'ADMIN' : 'EMPLOYEE';
+      
+      const userData = { id, email, username: userUsername, role };
+      
+      localStorage.setItem('token', accessToken);
       localStorage.setItem('user', JSON.stringify(userData));
-      return userData;
+      
+      api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+      setUser(userData);
+      
+      return { success: true };
     } catch (error) {
-      throw new Error('Login failed');
+      return { 
+        success: false, 
+        message: error.response?.data?.message || 'Login failed' 
+      };
     }
   };
 
   const register = async (userData) => {
     try {
-      const response = await api.post('/employees/register', userData);
-      const newUser = response.data;
-      setUser(newUser);
-      localStorage.setItem('user', JSON.stringify(newUser));
-      return newUser;
+      await api.post('/auth/signup', userData);
+      return { success: true };
     } catch (error) {
-      throw new Error('Registration failed');
+      return { 
+        success: false, 
+        message: error.response?.data?.message || 'Registration failed' 
+      };
     }
   };
 
   const logout = () => {
-    setUser(null);
+    localStorage.removeItem('token');
     localStorage.removeItem('user');
+    delete api.defaults.headers.common['Authorization'];
+    setUser(null);
   };
 
   const value = {

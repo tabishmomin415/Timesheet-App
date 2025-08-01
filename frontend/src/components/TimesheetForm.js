@@ -1,19 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import {
+  Container,
+  Paper,
+  TextField,
+  Button,
+  Typography,
+  Box,
+  Alert,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
+} from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
 import api from '../services/api';
-import { format } from 'date-fns';
 
 const TimesheetForm = () => {
-  const { user } = useAuth();
-  const [projects, setProjects] = useState([]);
   const [formData, setFormData] = useState({
     projectId: '',
-    date: format(new Date(), 'yyyy-MM-dd'),
+    date: dayjs(),
     hours: '',
     description: ''
   });
+  const [projects, setProjects] = useState([]);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchProjects();
@@ -25,6 +42,7 @@ const TimesheetForm = () => {
       setProjects(response.data);
     } catch (error) {
       console.error('Error fetching projects:', error);
+      setError('Failed to load projects');
     }
   };
 
@@ -35,105 +53,118 @@ const TimesheetForm = () => {
     });
   };
 
+  const handleDateChange = (newDate) => {
+    setFormData({
+      ...formData,
+      date: newDate
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage('');
+    setError('');
+    setSuccess('');
 
     try {
-      await api.post(`/timesheets/${user.id}`, {
-        ...formData,
-        projectId: parseInt(formData.projectId),
-        hours: parseFloat(formData.hours)
+      await api.post('/timesheets', {
+        projectId: formData.projectId,
+        date: formData.date.format('YYYY-MM-DD'),
+        hours: parseFloat(formData.hours),
+        description: formData.description
       });
       
-      setMessage('Timesheet added successfully!');
-      setFormData({
-        projectId: '',
-        date: format(new Date(), 'yyyy-MM-dd'),
-        hours: '',
-        description: ''
-      });
+      setSuccess('Timesheet entry created successfully!');
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 2000);
     } catch (error) {
-      setMessage('Error adding timesheet. Please try again.');
+      setError(error.response?.data?.message || 'Failed to create timesheet entry');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="timesheet-form-container">
-      <h2>Add Timesheet Entry</h2>
-      
-      {message && (
-        <div className={`message ${message.includes('Error') ? 'error' : 'success'}`}>
-          {message}
-        </div>
-      )}
-      
-      <form onSubmit={handleSubmit} className="timesheet-form">
-        <div className="form-group">
-          <label htmlFor="projectId">Project:</label>
-          <select
-            id="projectId"
-            name="projectId"
-            value={formData.projectId}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select a project</option>
-            {projects.map((project) => (
-              <option key={project.id} value={project.id}>
-                {project.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        
-        <div className="form-group">
-          <label htmlFor="date">Date:</label>
-          <input
-            type="date"
-            id="date"
-            name="date"
-            value={formData.date}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        
-        <div className="form-group">
-          <label htmlFor="hours">Hours:</label>
-          <input
-            type="number"
-            id="hours"
-            name="hours"
-            value={formData.hours}
-            onChange={handleChange}
-            step="0.25"
-            min="0"
-            max="24"
-            required
-          />
-        </div>
-        
-        <div className="form-group">
-          <label htmlFor="description">Description:</label>
-          <textarea
-            id="description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            rows="4"
-            placeholder="Describe the work done..."
-          />
-        </div>
-        
-        <button type="submit" disabled={loading} className="submit-button">
-          {loading ? 'Adding...' : 'Add Timesheet'}
-        </button>
-      </form>
-    </div>
+    <Container component="main" maxWidth="md">
+      <Box sx={{ mt: 4 }}>
+        <Paper elevation={3} sx={{ padding: 4 }}>
+          <Typography component="h1" variant="h4" align="center" gutterBottom>
+            Add Timesheet Entry
+          </Typography>
+          
+          {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+          {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
+          
+          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+            <FormControl fullWidth margin="normal" required>
+              <InputLabel id="project-label">Project</InputLabel>
+              <Select
+                labelId="project-label"
+                id="projectId"
+                name="projectId"
+                value={formData.projectId}
+                label="Project"
+                onChange={handleChange}
+              >
+                {projects.map((project) => (
+                  <MenuItem key={project.id} value={project.id}>
+                    {project.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                label="Date"
+                value={formData.date}
+                onChange={handleDateChange}
+                renderInput={(params) => (
+                  <TextField {...params} fullWidth margin="normal" required />
+                )}
+                sx={{ width: '100%', mt: 2, mb: 1 }}
+              />
+            </LocalizationProvider>
+
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="hours"
+              label="Hours Worked"
+              name="hours"
+              type="number"
+              inputProps={{ min: "0.1", max: "24", step: "0.1" }}
+              value={formData.hours}
+              onChange={handleChange}
+            />
+
+            <TextField
+              margin="normal"
+              fullWidth
+              id="description"
+              label="Description"
+              name="description"
+              multiline
+              rows={4}
+              value={formData.description}
+              onChange={handleChange}
+            />
+
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+              disabled={loading}
+            >
+              {loading ? 'Adding...' : 'Add Timesheet Entry'}
+            </Button>
+          </Box>
+        </Paper>
+      </Box>
+    </Container>
   );
 };
 

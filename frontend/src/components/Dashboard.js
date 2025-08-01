@@ -1,87 +1,212 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import {
+  Container,
+  Typography,
+  Card,
+  CardContent,
+  Grid,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Box
+} from '@mui/material';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement } from 'chart.js';
+import { Pie, Bar } from 'react-chartjs-2';
 import api from '../services/api';
-import { format, startOfWeek, endOfWeek } from 'date-fns';
+
+ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement);
 
 const Dashboard = () => {
-  const { user } = useAuth();
-  const [recentTimesheets, setRecentTimesheets] = useState([]);
-  const [weeklyHours, setWeeklyHours] = useState(0);
+  const [timesheets, setTimesheets] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchDashboardData();
+    fetchTimesheets();
   }, []);
 
-  const fetchDashboardData = async () => {
+  const fetchTimesheets = async () => {
     try {
-      const today = new Date();
-      const weekStart = startOfWeek(today);
-      const weekEnd = endOfWeek(today);
-      
-      const response = await api.get(`/timesheets/${user.id}`, {
-        params: {
-          startDate: format(weekStart, 'yyyy-MM-dd'),
-          endDate: format(weekEnd, 'yyyy-MM-dd')
-        }
-      });
-      
-      setRecentTimesheets(response.data);
-      const totalHours = response.data.reduce((sum, ts) => sum + ts.hours, 0);
-      setWeeklyHours(totalHours);
+      const response = await api.get('/timesheets');
+      setTimesheets(response.data);
     } catch (error) {
-      console.error('Error fetching dashboard data:', error);
+      console.error('Error fetching timesheets:', error);
     } finally {
       setLoading(false);
     }
   };
 
+  const getProjectData = () => {
+    const projectHours = {};
+    timesheets.forEach(timesheet => {
+      if (projectHours[timesheet.projectName]) {
+        projectHours[timesheet.projectName] += parseFloat(timesheet.hours);
+      } else {
+        projectHours[timesheet.projectName] = parseFloat(timesheet.hours);
+      }
+    });
+
+    return {
+      labels: Object.keys(projectHours),
+      datasets: [
+        {
+          data: Object.values(projectHours),
+          backgroundColor: [
+            '#FF6384',
+            '#36A2EB',
+            '#FFCE56',
+            '#4BC0C0',
+            '#9966FF',
+            '#FF9F40',
+          ],
+        },
+      ],
+    };
+  };
+
+  const getWeeklyData = () => {
+    const weeklyHours = {};
+    timesheets.forEach(timesheet => {
+      const week = new Date(timesheet.date).toISOString().slice(0, 10);
+      if (weeklyHours[week]) {
+        weeklyHours[week] += parseFloat(timesheet.hours);
+      } else {
+        weeklyHours[week] = parseFloat(timesheet.hours);
+      }
+    });
+
+    const sortedWeeks = Object.keys(weeklyHours).sort();
+    
+    return {
+      labels: sortedWeeks,
+      datasets: [
+        {
+          label: 'Hours',
+          data: sortedWeeks.map(week => weeklyHours[week]),
+          backgroundColor: '#36A2EB',
+        },
+      ],
+    };
+  };
+
+  const totalHours = timesheets.reduce((sum, timesheet) => sum + parseFloat(timesheet.hours), 0);
+  const totalProjects = new Set(timesheets.map(t => t.projectName)).size;
+
   if (loading) {
-    return <div className="loading">Loading...</div>;
+    return (
+      <Container sx={{ mt: 4 }}>
+        <Typography>Loading...</Typography>
+      </Container>
+    );
   }
 
   return (
-    <div className="dashboard">
-      <h1>Dashboard</h1>
+    <Container sx={{ mt: 4 }}>
+      <Typography variant="h4" gutterBottom>
+        Dashboard
+      </Typography>
       
-      <div className="dashboard-stats">
-        <div className="stat-card">
-          <h3>This Week's Hours</h3>
-          <p className="stat-number">{weeklyHours}</p>
-        </div>
-        <div className="stat-card">
-          <h3>Timesheets This Week</h3>
-          <p className="stat-number">{recentTimesheets.length}</p>
-        </div>
-      </div>
-      
-      <div className="dashboard-actions">
-        <Link to="/timesheet" className="action-button">
-          Add New Timesheet
-        </Link>
-        <Link to="/summary" className="action-button">
-          View Summary
-        </Link>
-      </div>
-      
-      <div className="recent-timesheets">
-        <h3>Recent Timesheets</h3>
-        {recentTimesheets.length > 0 ? (
-          <div className="timesheet-list">
-            {recentTimesheets.map((ts) => (
-              <div key={ts.id} className="timesheet-item">
-                <div className="timesheet-project">{ts.projectName}</div>
-                <div className="timesheet-date">{format(new Date(ts.date), 'MMM dd, yyyy')}</div>
-                <div className="timesheet-hours">{ts.hours}h</div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p>No timesheets for this week yet.</p>
-        )}
-      </div>
-    </div>
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid item xs={12} sm={6} md={4}>
+          <Card>
+            <CardContent>
+              <Typography color="textSecondary" gutterBottom>
+                Total Hours
+              </Typography>
+              <Typography variant="h4">
+                {totalHours.toFixed(1)}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={6} md={4}>
+          <Card>
+            <CardContent>
+              <Typography color="textSecondary" gutterBottom>
+                Total Projects
+              </Typography>
+              <Typography variant="h4">
+                {totalProjects}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={6} md={4}>
+          <Card>
+            <CardContent>
+              <Typography color="textSecondary" gutterBottom>
+                Total Entries
+              </Typography>
+              <Typography variant="h4">
+                {timesheets.length}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+
+      {timesheets.length > 0 && (
+        <Grid container spacing={3} sx={{ mb: 4 }}>
+          <Grid item xs={12} md={6}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Hours by Project
+                </Typography>
+                <Box sx={{ height: 300, display: 'flex', justifyContent: 'center' }}>
+                  <Pie data={getProjectData()} options={{ maintainAspectRatio: false }} />
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Daily Hours
+                </Typography>
+                <Box sx={{ height: 300 }}>
+                  <Bar data={getWeeklyData()} options={{ maintainAspectRatio: false }} />
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+      )}
+
+      <Card>
+        <CardContent>
+          <Typography variant="h6" gutterBottom>
+            Recent Timesheets
+          </Typography>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Date</TableCell>
+                  <TableCell>Project</TableCell>
+                  <TableCell>Hours</TableCell>
+                  <TableCell>Description</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {timesheets.slice(0, 10).map((timesheet) => (
+                  <TableRow key={timesheet.id}>
+                    <TableCell>{new Date(timesheet.date).toLocaleDateString()}</TableCell>
+                    <TableCell>{timesheet.projectName}</TableCell>
+                    <TableCell>{timesheet.hours}</TableCell>
+                    <TableCell>{timesheet.description}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </CardContent>
+      </Card>
+    </Container>
   );
 };
 

@@ -1,39 +1,77 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Box
+} from '@mui/material';
 import { useAuth } from '../contexts/AuthContext';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
 
+  const isActive = (path) => location.pathname === path;
+
+  // Check if user is admin
+  const isAdmin = user?.role === 'ADMIN';
+
   return (
-    <nav className="navbar">
-      <div className="nav-container">
-        <Link to="/" className="nav-logo">
-          Timesheet App
-        </Link>
-        
-        {user ? (
-          <div className="nav-menu">
-            <Link to="/" className="nav-link">Dashboard</Link>
-            <Link to="/timesheet" className="nav-link">Add Timesheet</Link>
-            <Link to="/summary" className="nav-link">Summary</Link>
-            <span className="nav-user">Welcome, {user.firstName}!</span>
-            <button onClick={handleLogout} className="nav-logout">Logout</button>
-          </div>
-        ) : (
-          <div className="nav-menu">
-            <Link to="/login" className="nav-link">Login</Link>
-            <Link to="/register" className="nav-link">Register</Link>
-          </div>
-        )}
-      </div>
-    </nav>
+    <AppBar position="static">
+      <Toolbar>
+        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          Timesheet Management
+        </Typography>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          {isAdmin ? (
+            // Admin-only navigation
+            <Button
+              color="inherit"
+              onClick={() => navigate('/admin')}
+              variant={isActive('/admin') ? 'outlined' : 'text'}
+            >
+              Admin Dashboard
+            </Button>
+          ) : (
+            // Employee navigation
+            <>
+              <Button
+                color="inherit"
+                onClick={() => navigate('/dashboard')}
+                variant={isActive('/dashboard') ? 'outlined' : 'text'}
+              >
+                Dashboard
+              </Button>
+              <Button
+                color="inherit"
+                onClick={() => navigate('/timesheet/new')}
+                variant={isActive('/timesheet/new') ? 'outlined' : 'text'}
+              >
+                Add Timesheet
+              </Button>
+              <Button
+                color="inherit"
+                onClick={() => navigate('/timesheet/summary')}
+                variant={isActive('/timesheet/summary') ? 'outlined' : 'text'}
+              >
+                Summary
+              </Button>
+            </>
+          )}
+          <Button color="inherit" onClick={handleLogout}>
+            Logout ({user?.username})
+          </Button>
+        </Box>
+      </Toolbar>
+    </AppBar>
   );
 };
 
